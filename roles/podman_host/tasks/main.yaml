@@ -1,0 +1,10 @@
+- name: Install podman
+  ansible.builtin.apt:
+    package:
+      - podman
+      - podman-compose
+- name: Enable podman
+  ansible.builtin.service:
+    name: podman.socket
+    state: started
+    enabled: true
