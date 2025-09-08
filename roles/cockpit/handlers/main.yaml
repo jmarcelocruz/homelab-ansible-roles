@@ -1,0 +1,4 @@
+- name: Reload Cockpit
+  ansible.builtin.service:
+    name: cockpit.socket
+    state: restarted

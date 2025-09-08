@@ -1,0 +1,21 @@
+- name: Install Cockpit
+  ansible.builtin.apt:
+    package:
+      - cockpit
+      - cockpit-networkmanager
+      - cockpit-pcp
+      - cockpit-storaged
+      - pcp
+- name: Write Cockpit disallowed-users configuration
+  ansible.builtin.copy:
+    src: etc/cockpit/disallowed-users
+    dest: /etc/cockpit
+    owner: root
+    mode: "0644"
+  notify:
+    - Reload Cockpit
+- name: Enable Cockpit
+  ansible.builtin.service:
+    name: cockpit.socket
+    state: started
+    enabled: true
