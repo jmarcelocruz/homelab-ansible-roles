@@ -1,0 +1,23 @@
+- name: Install lxc
+  ansible.builtin.apt:
+    package: lxc
+- name: Disable lxc-net
+  ansible.builtin.systemd_service:
+    name: lxc-net
+    state: stopped
+    enabled: false
+    masked: true
+- name: Write lxc configuration
+  block:
+    - name: Write lxc system configuration
+      ansible.builtin.copy:
+        src: etc/lxc/lxc.conf
+        dest: /etc/lxc
+        owner: root
+        mode: "0644"
+    - name: Write lxc container default configuration
+      ansible.builtin.copy:
+        src: etc/lxc/default.conf
+        dest: /etc/lxc
+        owner: root
+        mode: "0644"
