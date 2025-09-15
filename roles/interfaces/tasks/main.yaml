@@ -1,0 +1,13 @@
+- name: Create /etc/network/interfaces.d directory
+  ansible.builtin.file:
+    path: /etc/network/interfaces.d
+    state: directory
+    mode: "0755"
+- name: Write network interfaces configuration
+  notify:
+    - Reload interfaces
+  ansible.builtin.copy:
+    src: etc/network/interfaces
+    dest: /etc/network/interfaces
+    owner: root
+    mode: "0644"

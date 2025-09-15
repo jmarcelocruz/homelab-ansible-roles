@@ -1,0 +1,3 @@
+- name: Reload interfaces
+  ansible.builtin.command:
+    cmd: /usr/sbin/ifup -a
