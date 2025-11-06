@@ -1,0 +1,59 @@
+- name: Remove unnecessary packages
+  ansible.builtin.apt:
+    name:
+      - firefox-esr
+      - gnome-games
+    autoremove: true
+    purge: true
+    state: absent
+- name: Create /etc/apt/keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+- name: Write apt keyrings
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/apt/keyrings
+    owner: root
+    mode: 0755
+  loop: "{{ query('fileglob', 'etc/apt/keyrings/*') }}"
+- name: Create /etc/apt/preferences.directory
+  ansible.builtin.file:
+    path: /etc/apt/preferences.d
+    state: directory
+- name: Write apt preferences
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/apt/preferences.d
+    owner: root
+    mode: 0644
+  loop: "{{ query('fileglob', 'etc/apt/preferences.d/*') }}"
+- name: Create /etc/apt/sources.list.d directory
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d
+    state: directory
+- name: Write apt sources
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /etc/apt/sources.list.d
+    owner: root
+    mode: 0644
+  loop: "{{ query('fileglob', 'etc/apt/sources.list.d/*') }}"
+- name: Check multi-arch support
+  ansible.builtin.command:
+    cmd: dpkg --print-foreign-architectures
+  register: dpkg_archs
+  changed_when: false
+- name: Enable multi-arch support
+  ansible.builtin.command:
+    cmd: dpkg --add-architecture i386
+  when: "'i386' not in dpkg_archs.stdout_lines"
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+- name: Install packages
+  ansible.builtin.apt:
+    name:
+      - code
+      - firefox
+      - spotify-client
